@@ -1,5 +1,6 @@
 # @iwanTriker, 2026
-
+# Soo, i trying make it much possiple easy to understand.
+# Sorry 4 bad englidh GAAAAAYZZZ ^^
 
 import customtkinter as ctk
 import requests
@@ -29,7 +30,7 @@ class App(ctk.CTk):
         super().__init__()
 
         self.title("ModManager")
-        self.geometry("500x400")
+        self.geometry("500x600")
         self.resizable(False, False)
 
         #Startup
@@ -59,8 +60,21 @@ class App(ctk.CTk):
         self.progress.pack(pady=10)
 
         #StateBT
-        self.btn_update = ctk.CTkButton(self.main_frame, text="ПРОВЕРИТЬ И ОБНОВИТЬ", font=("Segoe UI", 14, "bold"), height=45, fg_color="#1f538d", command=self.start_update_thread)
+        self.btn_update = ctk.CTkButton(self.main_frame, text="ПРОВЕРИТЬ И ОБНОВИТЬ", font=("Segoe UI", 14, "bold"), height=45, width=200, fg_color="#1f538d", command=self.start_update_thread)
         self.btn_update.pack(pady=10)
+        
+        #ThemeChang
+        self.btn_theme = ctk.CTkButton(self.main_frame, text="🌙", width=35, height=35, corner_radius=10,font=("Segoe UI", 16), fg_color="gray20", hover_color=("gray10", "gray70"), command=self.ThemeChange)
+        self.btn_theme.place(relx=0.95, rely=0.03, anchor="ne")
+        
+        #ChangeLOgs
+        self.changelog_label = ctk.CTkLabel(self.main_frame, text="ChangeLog:", font=("Segoe UI", 12, "bold"))
+        self.changelog_label.pack(pady=(5, 0))
+
+        self.changelog_text = ctk.CTkTextbox(self.main_frame, width=400, height=80, font=("Segoe UI", 11))
+        self.changelog_text.pack(pady=5, padx=10)
+        self.changelog_text.insert("0.0", "Обновите Модпак")
+        self.changelog_text.configure(state="disabled") 
 
         #ChangePaths
         self.bottom_frame = ctk.CTkFrame(self.main_frame, fg_color="transparent")
@@ -76,6 +90,8 @@ class App(ctk.CTk):
         if os.path.exists(CONFIG_FILE):
             with open(CONFIG_FILE, "r") as f:
                 return json.load(f)
+                ctk.set_appearance_mode(config.get("theme", "Dark"))
+                return config
         return {"version": "0.0.0", "path": DEFAULT_PATH}
         
     APP_VERSION_URL = "nul"
@@ -116,7 +132,7 @@ class App(ctk.CTk):
         if os.path.exists(self.mods_path):
             os.startfile(self.mods_path)
         else:
-            self.status_label.configure(text="Ошибка: Папка не найдена!", text_color="red")
+            self.status_label.configure(text="Ошибка: Папка не найдена!", text_color=error_color)
 
     def change_path(self):
         new_path = filedialog.askdirectory(initialdir=self.mods_path, title="Выберите папку mods")
@@ -131,10 +147,18 @@ class App(ctk.CTk):
 
     def check_and_update(self):
         try:
-            self.status_label.configure(text="🔍 Проверка версии на сервере...", text_color="white")
+            self.status_label.configure(text="🔍 Проверка версии на сервере...")
             list_url = f"https://docs.google.com/uc?export=download&id={LIST_FILE_ID}"
             data = requests.get(list_url).json()
             remote_version = data.get("version")
+            
+            data = requests.get(list_url).json()
+            remote_version = data.get("version")
+            changelog = data.get("changelog", "Мышь Повесилась")
+            self.changelog_text.configure(state="normal")
+            self.changelog_text.delete("0.0", "end")
+            self.changelog_text.insert("0.0", changelog)
+            self.changelog_text.configure(state="disabled")
 
             if remote_version != self.current_version:
                 self.status_label.configure(text=f"📦 Найдено обновление: {remote_version}")
@@ -165,16 +189,40 @@ class App(ctk.CTk):
                 self.current_version = remote_version
                 self.save_config()
                 self.ver_label.configure(text=f"Версия модов: {self.current_version}")
-                self.status_label.configure(text="✅ Успешно обновлено!", text_color="#4BB543")
+                # Используйте адаптивные цвета:
+                success_color = ("#2E7D32", "#4BB543")  # зеленый для обеих тем
+                error_color = ("#C62828", "#FF9494")    # красный для обеих тем
+
+                self.status_label.configure(text="✅ Успешно обновлено!", text_color=success_color)
                 self.progress.set(1.0)
             else:
-                self.status_label.configure(text="У вас последняя версия", text_color="#4BB543")
+                self.status_label.configure(text="✅ У вас последняя версия", text_color="#4BB543")
                 self.progress.set(1.0)
 
         except Exception as e:
             self.status_label.configure(text=f"💀 Ошибка: {str(e)[:35]}", text_color="#FF9494")
-        
+            
         self.btn_update.configure(state="normal")
+        
+    
+    def ThemeChange(self, *args):
+        current_mode = ctk.get_appearance_mode()
+        new_mode = "Light" if current_mode == "Dark" else "Dark"
+        ctk.set_appearance_mode(new_mode)
+        
+        #colour
+        if new_mode == "Light":
+            self.btn_theme.configure(text="☀️", text_color="Black")  #Orange sun
+        else:
+            self.btn_theme.configure(text="🌙", text_color="white")   #White Mooon
+        
+        hover_color = ("gray10", "gray70") if new_mode == "Dark" else ("gray50", "gray10")
+        standart_clr = ("gray20") if new_mode == "Dark" else ("gray70")
+        self.btn_theme.configure(hover_color=hover_color, fg_color=standart_clr)
+        
+        #Config (btw doesnt work)
+        self.config["theme"] = new_mode
+        self.save_config()
 
 if __name__ == "__main__":
     app = App()
