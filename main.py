@@ -1,6 +1,11 @@
 # @iwanTriker, 2026
-# Soo, i trying make it much possiple easy to understand.
-# Sorry 4 bad englidh GAAAAAYZZZ ^^
+# Soo, i trying make it much possiple easer to understand.
+# Sorry 4 bad englidh GAAAAAYZZZ ^^короч ладно
+# Build: pyinstaller --onefile --windowed --uac-admin main.py
+# For unix/linux: Change dirs, and IDK how to build it, just use py
+#
+# Blah Blah, i love murder Dronez (yeah, in big 2026)
+
 
 import customtkinter as ctk
 import requests
@@ -42,7 +47,7 @@ class App(ctk.CTk):
         self.main_frame = ctk.CTkFrame(self, corner_radius=15)
         self.main_frame.pack(pady=20, padx=20, fill="both", expand=True)
 
-        self.label = ctk.CTkLabel(self.main_frame, text="Modpack Updater", font=("Segoe UI", 24, "bold"))
+        self.label = ctk.CTkLabel(self.main_frame, text="Modpack Updater V0.3.4", font=("Segoe UI", 24, "bold"))
         self.label.pack(pady=(15, 5))
 
         self.ver_label = ctk.CTkLabel(self.main_frame, text=f"Версия модов: {self.current_version}", font=("Segoe UI", 13))
@@ -67,6 +72,10 @@ class App(ctk.CTk):
         self.btn_theme = ctk.CTkButton(self.main_frame, text="🌙", width=35, height=35, corner_radius=10,font=("Segoe UI", 16), fg_color="gray20", hover_color=("gray10", "gray70"), command=self.ThemeChange)
         self.btn_theme.place(relx=0.95, rely=0.03, anchor="ne")
         
+        #ЧИВО
+        self.ChWoo = ctk.CTkButton(self.main_frame, text="❓", width=35, height=35, corner_radius=10,font=("Segoe UI", 16), fg_color="gray20", hover_color=("gray10", "gray70"), command=self.ChWo)
+        self.ChWoo.place(relx=0.03, rely=0.91, anchor="nw")
+        
         #ChangeLOgs
         self.changelog_label = ctk.CTkLabel(self.main_frame, text="ChangeLog:", font=("Segoe UI", 12, "bold"))
         self.changelog_label.pack(pady=(5, 0))
@@ -84,7 +93,11 @@ class App(ctk.CTk):
         self.btn_open.grid(row=0, column=0, padx=10)
 
         self.btn_path = ctk.CTkButton(self.bottom_frame, text="Изменить путь", width=140, fg_color="#3d3d3d", command=self.change_path)
-        self.btn_path.grid(row=0, column=1, padx=10)                                                        
+        self.btn_path.grid(row=0, column=1, padx=10)   
+
+        #By iwamTriker
+        self.path_label = ctk.CTkLabel(self.main_frame, text=f"By iwamTriker\n^^ have fun епьта", font=("Segoe UI", 14), text_color="gray")
+        self.path_label.pack(pady=50)
 
     def load_config(self):
         if os.path.exists(CONFIG_FILE):
@@ -223,7 +236,18 @@ class App(ctk.CTk):
         #Config (btw doesnt work)
         self.config["theme"] = new_mode
         self.save_config()
+        
+    def ChWo(self, *args):
+        print("dfb")
+        changelog = "Нажмите 'обновить' для обновления модпака на вашем пк.\n \n====================\n!!ВНИМАНИЕ!!\n====================\n!!ОБНОВЛЕНИЕ ВЕДЕТ К УДАЛЕНИЮ СТАРЫХ МОДИФИКАЦИЙ!!\n====================\n \nУбедитесь что вы правильно указали путь к папку mods,\nиначе модпак установится в некорректную директорию.\nЕсли вы нашли ошибку, просьба написать Тех.Админу:\n \n[>]https://t.me/Vaniletto[<]"
+        self.changelog_text.configure(state="normal")
+        self.changelog_text.delete("0.0", "end")
+        self.changelog_text.insert("0.0", changelog)
+        self.changelog_text.configure(state="disabled")
 
 if __name__ == "__main__":
     app = App()
     app.mainloop()
+    
+
+
